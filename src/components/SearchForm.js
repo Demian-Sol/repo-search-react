@@ -11,17 +11,25 @@ class SearchForm extends Component {
   }
 
   handleInput = event => {
-    const { setSeachValue } = this.props;
+    const { setSearchValue } = this.props;
     const { value } = event.target;
 
-    if (value.length > 5) setSeachValue(value);
+    setSearchValue(value);
   }
 
   render() {
+    const { searchValue } = this.props;
+
     return (
-      <input type="text" placeholder="search repos" onInput={this.handleInput} />
+      <input
+        type="text"
+        placeholder="search repos"
+        onInput={this.handleInput}
+        value={searchValue}
+      />
     );
   }
 }
+
 
 export default SearchForm;
