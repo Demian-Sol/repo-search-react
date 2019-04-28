@@ -6,3 +6,17 @@ export const setSearchValue = value => (
     value,
   }
 );
+
+export const setResults = results => (
+  {
+    type: types.SET_RESULTS,
+    results,
+  }
+);
+
+export const setError = error => (
+  {
+    type: types.SET_ERROR,
+    error,
+  }
+);

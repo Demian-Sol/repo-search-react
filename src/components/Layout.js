@@ -1,7 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SearchForm from './SearchForm';
-import styles from './Layout.moduce.scss';
+import styles from './Layout.module.scss';
 
 const Layout = ({searchValue, setSearchValue}) => (
   <div className={styles['']}>

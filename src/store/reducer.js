@@ -3,6 +3,7 @@ import * as types from './types';
 const initialState = {
   searchValue: '',
   results: [],
+  error: '',
 };
 
 const reducer = (state = initialState, action) => {
@@ -11,6 +12,16 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         searchValue: action.value,
+      };
+    case types.SET_RESULTS:
+      return {
+        ...state,
+        results: action.results,
+      };
+    case types.SET_ERROR:
+      return {
+        ...state,
+        error: action.error,
       };
     default:
       return state;
