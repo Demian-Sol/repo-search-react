@@ -24,7 +24,6 @@ class App extends Component {
     if (prevProps.searchValue !== searchValue && searchValue.trim().length >= 3) {
       axios.get(BASE_SEARCH_URL + searchValue.trim())
         .then(response => {
-          // const results = ;
           setResults(mapResponseToResults(response));
         })
         .catch(error => setError(error.code + error.message));
@@ -38,6 +37,7 @@ class App extends Component {
         <Layout
           searchValue={searchValue}
           setSearchValue={setSearchValue}
+          results={results}
         />
       </div>
     );
