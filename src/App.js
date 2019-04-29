@@ -13,20 +13,49 @@ import {
 } from './store';
 import Layout from './components/Layout';
 import { BASE_SEARCH_URL } from './constants';
+import { DEBOUNCE_TIME } from './config';
+import { debounce } from './utils';
 
 class App extends Component {
-  state = {
-    isSent: false,
+  constructor(props) {
+    super(props);
+    this.state = {
+      isSent: false,
+      axiosSource: null,
+    };
+
+    this.makeRequest = searchVal => {
+      const { isSent, axiosSource } = this.state;
+      const { setResults, setError } = this.props;
+
+      if (isSent) axiosSource.cancel();
+      this.setState({ isSent: true });
+      axios.get(BASE_SEARCH_URL + searchVal.trim(), {
+        cancelToken: axiosSource.token,
+      })
+        .then(response => {
+          this.setState({ isSent: false });
+          setResults(mapResponseToResults(response));
+        })
+        .catch(error => {
+          this.setState({ isSent: false });
+          setError(error.code + error.message);
+        });
+    };
+
+    this.initiateDebounce = debounce(this.makeRequest, DEBOUNCE_TIME);
+  }
+
+  componentDidMount() {
+    const { CancelToken } = axios;
+    const source = CancelToken.source();
+    this.setState({ axiosSource: source });
   }
 
   componentDidUpdate(prevProps) {
-    const { searchValue, setResults, setError } = this.props;
+    const { searchValue } = this.props;
     if (prevProps.searchValue !== searchValue && searchValue.trim().length >= 3) {
-      axios.get(BASE_SEARCH_URL + searchValue.trim())
-        .then(response => {
-          setResults(mapResponseToResults(response));
-        })
-        .catch(error => setError(error.code + error.message));
+      this.initiateDebounce(searchValue);
     }
   }
 

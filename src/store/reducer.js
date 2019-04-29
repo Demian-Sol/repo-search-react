@@ -17,6 +17,7 @@ const reducer = (state = initialState, action) => {
       return {
         ...state,
         results: action.results,
+        error: '',
       };
     case types.SET_ERROR:
       return {
