@@ -13,8 +13,22 @@ import {
 } from './store';
 import Layout from './components/Layout';
 import { BASE_SEARCH_URL } from './constants';
-import { DEBOUNCE_TIME } from './config';
+import { DEBOUNCE_TIME, MIN_CHARS_TO_SEARCH } from './config';
 import { debounce } from './utils';
+
+const propTypes = {
+  searchValue: PropTypes.string,
+  setResults: PropTypes.func,
+  setError: PropTypes.func,
+  setSearchValue: PropTypes.func,
+  results: PropTypes.array,
+};
+const defaultProps = {
+  setResults: () => null,
+  setError: () => null,
+  setSearchValue: () => null,
+  results: [],
+};
 
 class App extends Component {
   constructor(props) {
@@ -24,26 +38,7 @@ class App extends Component {
       axiosSource: null,
     };
 
-    this.makeRequest = searchVal => {
-      const { isSent, axiosSource } = this.state;
-      const { setResults, setError } = this.props;
-
-      if (isSent) axiosSource.cancel();
-      this.setState({ isSent: true });
-      axios.get(BASE_SEARCH_URL + searchVal.trim(), {
-        cancelToken: axiosSource.token,
-      })
-        .then(response => {
-          this.setState({ isSent: false });
-          setResults(mapResponseToResults(response));
-        })
-        .catch(error => {
-          this.setState({ isSent: false });
-          setError(error.code + error.message);
-        });
-    };
-
-    this.initiateDebounce = debounce(this.makeRequest, DEBOUNCE_TIME);
+    this.debouncedSearch = debounce(this.makeRequest, DEBOUNCE_TIME);
   }
 
   componentDidMount() {
@@ -54,10 +49,37 @@ class App extends Component {
 
   componentDidUpdate(prevProps) {
     const { searchValue } = this.props;
-    if (prevProps.searchValue !== searchValue && searchValue.trim().length >= 3) {
-      this.initiateDebounce(searchValue);
+    if (prevProps.searchValue !== searchValue
+    && searchValue.trim().length >= MIN_CHARS_TO_SEARCH) {
+      this.debouncedSearch(searchValue);
     }
   }
+
+  makeRequest = searchVal => {
+    const { isSent, axiosSource } = this.state;
+    const { setResults, setError } = this.props;
+    const { CancelToken } = axios;
+    const source = CancelToken.source();
+
+    if (isSent) {
+      axiosSource.cancel();
+      // to ensure request sending
+      this.setState({ isSent: false, axiosSource: source }, () => this.makeRequest(searchVal));
+    }
+
+    this.setState({ isSent: true });
+    axios.get(BASE_SEARCH_URL + searchVal.trim(), {
+      cancelToken: axiosSource.token,
+    })
+      .then(response => {
+        this.setState({ isSent: false });
+        setResults(mapResponseToResults(response));
+      })
+      .catch(error => {
+        this.setState({ isSent: false });
+        setError(error.code + error.message);
+      });
+  };
 
   render() {
     const { searchValue, setSearchValue, results } = this.props;
@@ -72,6 +94,9 @@ class App extends Component {
     );
   }
 }
+
+App.propTypes = propTypes;
+App.defaultProps = defaultProps;
 
 const mapStateToProps = state => (
   {

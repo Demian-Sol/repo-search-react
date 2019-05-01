@@ -1,6 +1,7 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import styles from './SearchResultCard.module.scss';
+import { TRANSLATIONS } from '../constants';
 
 const propTypes = {
   resultInfo: PropTypes.object,
@@ -28,11 +29,11 @@ const SearchResultsCard = ({
     </a>
     <div className={styles['secondary-info']}>
       <p>
-        {'Watchers: '}
+        {TRANSLATIONS.WATCHERS_LABEL}
         {watchersCount}
       </p>
       <p>
-        {'Stargazers: '}
+        {TRANSLATIONS.STARGAZERS_LABEL}
         {stargazersCount}
       </p>
     </div>

@@ -1,1 +1,3 @@
-export const DEBOUNCE_TIME = 1000;
+export const DEBOUNCE_TIME = 500;
+
+export const MIN_CHARS_TO_SEARCH = 3;
