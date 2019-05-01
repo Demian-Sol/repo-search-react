@@ -1,15 +1,17 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
+import { TRANSLATIONS } from '../constants';
+
+const propTypes = {
+  setSearchValue: PropTypes.func,
+  searchValue: PropTypes.string,
+};
+const defaultProps = {
+  setSearchValue: () => null,
+  searchValue: '',
+};
 
 class SearchForm extends Component {
-  static propTypes = {
-    setSeachValue: PropTypes.func,
-  }
-
-  static defaultProps = {
-    setSeachValue: () => null,
-  }
-
   handleInput = event => {
     const { setSearchValue } = this.props;
     const { value } = event.target;
@@ -23,7 +25,8 @@ class SearchForm extends Component {
     return (
       <input
         type="text"
-        placeholder="search repos"
+        placeholder={TRANSLATIONS.SEARCHBOX_PLACEHOLDER}
+        // no arrow functions to prevent function redeclaration during re-render
         onInput={this.handleInput}
         value={searchValue}
       />
@@ -31,5 +34,7 @@ class SearchForm extends Component {
   }
 }
 
+SearchForm.propTypes = propTypes;
+SearchForm.defaultProps = defaultProps;
 
 export default SearchForm;

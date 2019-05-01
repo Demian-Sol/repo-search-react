@@ -16,18 +16,14 @@ const defaultProps = {
 };
 
 const Layout = ({ searchValue, setSearchValue, results }) => (
-  <div className={styles['']}>
-    <div className={styles['']}>
-      <SearchForm
-        searchValue={searchValue}
-        setSearchValue={setSearchValue}
-      />
-    </div>
-    <div className={styles['']}>
-      <SearchResults
-        results={results}
-      />
-    </div>
+  <div className={styles['layout-container']}>
+    <SearchForm
+      searchValue={searchValue}
+      setSearchValue={setSearchValue}
+    />
+    <SearchResults
+      results={results}
+    />
   </div>
 );
 
